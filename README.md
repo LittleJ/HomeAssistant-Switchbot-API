@@ -1,2 +1,84 @@
 # HomeAssistant-Switchbot-API
+
 Connect Home Assistant to Switchbot API
+
+## SECRETS.YAML
+
+```
+```
+
+
+## CONFIGURATION.YAML
+
+```
+# CONNECT TO API
+rest_command:
+  switchbot_device_command:
+    url: 'https://api.switch-bot.com/v1.0/devices/{{ deviceId }}/commands'
+    method: post
+    content_type: 'application/json'
+    headers:
+      Authorization: !secret switchbot_api
+    payload: '{"command": "{{ command }}","parameter": "{{ parameter }}","commandType": "{{ commandType }}"}'
+
+# SWITCHBOT LIGHTSTRIP
+light:
+  - platform: template
+    lights:
+      switchbot_lightstrip:
+        friendly_name: Ruban chambre
+        unique_id: Ruban chambre
+        turn_on:
+          service: rest_command.switchbot_device_command
+          data:
+            deviceId: !secret switchbot_lightstrip_deviceId
+            command: "turnOn"
+        turn_off:
+          service: rest_command.switchbot_device_command
+          data:
+            deviceId: !secret switchbot_lightstrip_deviceId
+            command: "turnOff"
+        set_level:
+          service: rest_command.switchbot_device_command
+          data:
+            deviceId: !secret switchbot_lightstrip_deviceId
+            command: "setBrightness"
+            parameter: "{{brightness}}"
+        set_color:
+          service: rest_command.switchbot_device_command
+          data:
+            deviceId: !secret switchbot_lightstrip_deviceId
+            command: "setColor"
+            parameter: "{{rgb_color}}"
+
+# SWITCHBOT METER
+sensor:
+  - platform: rest
+    name: 'Meter1 JSON'
+    resource: !secret switchbot_meter1_status_url
+    method: GET
+    scan_interval: 600
+    headers:
+      Authorization: !secret switchbot_api
+      Content-Type: 'application/json'
+    value_template: '{{ value_json.body }}'
+    json_attributes_path: "$.body"
+    json_attributes:
+      - deviceId 
+      - deviceType
+      - hubDeviceId
+      - humidity
+      - temperature
+  - platform: template
+    sensors:
+      switchbot_meter1_temp:
+        friendly_name: "Meter1 Temperature"
+        value_template: '{{ states.sensor.meter1_json.attributes["temperature"] }}'
+        unit_of_measurement: "°C"
+        device_class: "temperature"
+      switchbot_meter1_humidity:
+        friendly_name: "Meter1 Humidity"
+        value_template: '{{ states.sensor.meter1_json.attributes["humidity"] }}'
+        unit_of_measurement: "%"
+        device_class: "humidity"
+```
