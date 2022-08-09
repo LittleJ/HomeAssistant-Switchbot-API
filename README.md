@@ -5,6 +5,9 @@ Connect Home Assistant to Switchbot API
 ## SECRETS.YAML
 
 ```
+switchbot_meter1_status_url: "https://api.switch-bot.com/v1.0/devices/<DEVICE ID>/status"
+switchbot_api: <TOKEN>
+switchbot_lightstrip_deviceId: <DEVICE ID>
 ```
 
 
