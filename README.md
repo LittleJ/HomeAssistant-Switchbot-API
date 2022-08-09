@@ -1,4 +1,4 @@
-# HomeAssistant-Switchbot-API
+# Home Assistant - Switchbot API
 
 Connect Home Assistant to Switchbot API
 
