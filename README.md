@@ -6,6 +6,7 @@ Connect Home Assistant to Switchbot API
 
 ```
 switchbot_meter1_status_url: "https://api.switch-bot.com/v1.0/devices/<DEVICE ID>/status"
+switchbot_contactsensor1_status_url: "https://api.switch-bot.com/v1.0/devices/<DEVICE ID>/status"
 switchbot_api: <TOKEN>
 switchbot_lightstrip_deviceId: <DEVICE ID>
 ```
@@ -54,6 +55,24 @@ light:
             command: "setColor"
             parameter: "{{rgb_color}}"
 
+# SWITCHBOT CONTACT SENSOR
+binary_sensor:
+  - platform: rest
+    name: 'Contact Sensor 1 JSON'
+    resource: !secret switchbot_contactsensor1_status_url
+    method: GET
+    scan_interval: 600
+    headers:
+      Authorization: !secret switchbot_api
+      Content-Type: 'application/json'
+    value_template: '{{ value_json.body }}'
+  - platform: template
+    sensors:
+      switchbot_contactsensor1_openstate:
+        friendly_name: "Contact sensor 1 Open State"
+        value_template: '{{ states.sensor.meter1_json.attributes["openState"] }}'
+        device_class: "opening"
+
 # SWITCHBOT METER
 sensor:
   - platform: rest
@@ -84,4 +103,5 @@ sensor:
         value_template: '{{ states.sensor.meter1_json.attributes["humidity"] }}'
         unit_of_measurement: "%"
         device_class: "humidity"
+
 ```
