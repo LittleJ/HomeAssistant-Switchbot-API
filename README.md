@@ -61,7 +61,8 @@ binary_sensor:
     name: 'Contact Sensor 1 JSON'
     resource: !secret switchbot_contactsensor1_status_url
     method: GET
-    scan_interval: 600
+    # Refresh every 30 seconds
+    scan_interval: 30
     headers:
       Authorization: !secret switchbot_api
       Content-Type: 'application/json'
@@ -79,7 +80,8 @@ sensor:
     name: 'Meter1 JSON'
     resource: !secret switchbot_meter1_status_url
     method: GET
-    scan_interval: 600
+    # Refresh every 5 minutes
+    scan_interval: 300
     headers:
       Authorization: !secret switchbot_api
       Content-Type: 'application/json'
