@@ -32,6 +32,8 @@ light:
       switchbot_lightstrip:
         friendly_name: Ruban chambre
         unique_id: Ruban chambre
+        temperature_template: "{{states('input_number.temperature_input') | int}}"
+        color_template: "{{ rgb_color.split(',') }}"
         turn_on:
           service: rest_command.switchbot_device_command
           data:
@@ -51,9 +53,13 @@ light:
         set_color:
           service: rest_command.switchbot_device_command
           data:
+            supported_color_modes:
+              - color_temp
+              - RGB
+            color_mode: RGB
             deviceId: !secret switchbot_lightstrip_deviceId
             command: "setColor"
-            parameter: "{{rgb_color}}"
+            parameter: "{{ rgb_color[0] }}:{{ rgb_color[1] }}:{{ rgb_color[2] }}"
 
 # SWITCHBOT CONTACT SENSOR
 binary_sensor:
